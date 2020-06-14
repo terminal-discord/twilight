@@ -274,6 +274,13 @@ impl InMemoryCache {
             .map(|x| Arc::clone(&x.data))
     }
 
+    /// Gets all guild IDs.
+    ///
+    /// This is an O(1) operation.
+    pub fn guild_ids(&self) -> Option<Vec<GuildId>> {
+        Some(self.0.guilds.iter().map(|item| *item.key()).collect())
+    }
+
     /// Gets the current user.
     ///
     /// This is an O(1) operation.
