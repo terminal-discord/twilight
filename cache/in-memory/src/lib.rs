@@ -281,6 +281,29 @@ impl InMemoryCache {
         Some(self.0.guilds.iter().map(|item| *item.key()).collect())
     }
 
+    /// Gets all channel IDs.
+    ///
+    /// This is an O(1) operation.
+    pub fn guild_channel_ids(&self) -> Option<Vec<ChannelId>> {
+        Some(
+            self.0
+                .channels_guild
+                .iter()
+                .map(|item| *item.key())
+                .collect(),
+        )
+    }
+
+    /// Gets all channel IDs in a guild.
+    ///
+    /// This is an O(1) operation.
+    pub fn channel_ids_in_guild(&self, guild_id: GuildId) -> Option<HashSet<ChannelId>> {
+        self.0
+            .guild_channels
+            .get(&guild_id)
+            .map(|x| x.value().clone())
+    }
+
     /// Gets the current user.
     ///
     /// This is an O(1) operation.
