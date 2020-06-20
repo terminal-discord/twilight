@@ -636,6 +636,10 @@ impl UpdateCache for RoleCreate {
             return;
         }
 
+        if let Some(mut roles) = cache.0.guild_roles.get_mut(&self.guild_id) {
+            roles.value_mut().insert(self.role.id);
+        }
+
         super::upsert_guild_item(
             &cache.0.roles,
             self.guild_id,
