@@ -272,6 +272,20 @@ impl InMemoryCache {
             .map(|r| Arc::clone(r.value()))
     }
 
+    /// Gets all members in a guild by ID
+    ///
+    /// This is an O(log n) operation.
+    pub fn members(&self, guild_id: GuildId) -> Option<Vec<Arc<CachedMember>>> {
+        Some(
+            self.0
+                .members
+                .iter()
+                .filter(|item| item.key().0 == guild_id)
+                .map(|item| Arc::clone(item.value()))
+                .collect(),
+        )
+    }
+
     /// Gets a message by channel ID and message ID.
     ///
     /// This is an O(log n) operation.
