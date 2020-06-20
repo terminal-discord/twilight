@@ -324,6 +324,16 @@ impl InMemoryCache {
         self.0.emojis.get(&emoji_id).map(|x| Arc::clone(&x.data))
     }
 
+    /// Gets all emojis in a guild by ID.
+    ///
+    /// This is an O(1) operation.
+    pub fn emojis(&self, guild_id: GuildId) -> Option<HashSet<EmojiId>> {
+        self.0
+            .guild_emojis
+            .get(&guild_id)
+            .map(|item| item.value().clone())
+    }
+
     /// Gets a group by ID.
     ///
     /// This is an O(1) operation.
