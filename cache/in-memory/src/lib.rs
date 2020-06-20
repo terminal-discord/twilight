@@ -329,6 +329,16 @@ impl InMemoryCache {
             .map(|role| Arc::clone(&role.data))
     }
 
+    /// Gets all roles in a guild by ID.
+    ///
+    /// This is an O(1) operation.
+    pub fn roles(&self, guild_id: GuildId) -> Option<HashSet<RoleId>> {
+        self.0
+            .guild_roles
+            .get(&guild_id)
+            .map(|item| item.value().clone())
+    }
+
     /// Gets a user by ID.
     ///
     /// This is an O(1) operation.
