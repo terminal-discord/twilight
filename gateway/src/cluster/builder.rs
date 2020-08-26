@@ -154,11 +154,7 @@ impl ClusterBuilder {
         Self::_new(token.into())
     }
 
-    fn _new(mut token: String) -> Self {
-        if !token.starts_with("Bot ") {
-            token.insert_str(0, "Bot ");
-        }
-
+    fn _new(token: String) -> Self {
         Self(
             ClusterConfig {
                 http_client: Client::new(token.clone()),

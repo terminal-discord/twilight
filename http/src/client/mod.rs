@@ -97,16 +97,7 @@ impl Client {
     ///
     /// [`builder`]: #method.builder
     pub fn new(token: impl Into<String>) -> Self {
-        let mut token = token.into();
-
-        let is_bot = token.starts_with("Bot ");
-        let is_bearer = token.starts_with("Bearer ");
-
-        // Make sure it is either a bot or bearer token, and assume it's a bot
-        // token if no prefix is given
-        if !is_bot && !is_bearer {
-            token.insert_str(0, "Bot ");
-        }
+        let token = token.into();
 
         Self {
             state: Arc::new(State {
