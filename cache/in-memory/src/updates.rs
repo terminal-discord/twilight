@@ -635,6 +635,10 @@ impl UpdateCache for Ready {
                 }
             }
         }
+
+        for private_channel in &self.private_channels {
+            cache.cache_private_channel(private_channel.clone());
+        }
     }
 }
 

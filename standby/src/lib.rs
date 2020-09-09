@@ -996,6 +996,7 @@ mod tests {
     async fn test_wait_for_event() {
         let ready = Ready {
             guilds: Vec::new(),
+            private_channels: Vec::new(),
             session_id: String::new(),
             shard: Some([5, 7]),
             user: CurrentUser {
