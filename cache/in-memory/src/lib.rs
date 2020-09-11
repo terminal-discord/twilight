@@ -494,6 +494,19 @@ impl InMemoryCache {
             .map(|r| Arc::clone(r.value()))
     }
 
+    /// Gets all private channels.
+    ///
+    /// This is an O(1) operation.
+    pub fn private_channels(&self) -> Option<Vec<Arc<PrivateChannel>>> {
+        Some(
+            self.0
+                .channels_private
+                .iter()
+                .map(|r| Arc::clone(r.value()))
+                .collect(),
+        )
+    }
+
     /// Gets a role by ID.
     ///
     /// This is an O(1) operation. This requires the [`GUILDS`] intent.
