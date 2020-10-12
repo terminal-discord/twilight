@@ -8,7 +8,7 @@ use twilight_model::{
 pub struct CachedPresence {
     pub activities: Vec<Activity>,
     pub client_status: ClientStatus,
-    pub guild_id: GuildId,
+    pub guild_id: Option<GuildId>,
     pub status: Status,
     pub user_id: UserId,
 }

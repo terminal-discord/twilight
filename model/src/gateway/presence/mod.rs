@@ -35,7 +35,7 @@ pub struct Presence {
     #[serde(default)]
     pub activities: Vec<Activity>,
     pub client_status: ClientStatus,
-    pub guild_id: GuildId,
+    pub guild_id: Option<GuildId>,
     pub status: Status,
     pub user: UserOrId,
 }
@@ -74,7 +74,7 @@ impl<'de> Visitor<'de> for PresenceVisitor {
         Ok(Presence {
             activities: presence.activities,
             client_status: presence.client_status,
-            guild_id: presence.guild_id.unwrap_or(self.0),
+            guild_id: Some(presence.guild_id.unwrap_or(self.0)),
             status: presence.status,
             user: presence.user,
         })
@@ -182,7 +182,7 @@ mod tests {
                 mobile: None,
                 web: None,
             },
-            guild_id: GuildId(2),
+            guild_id: Some(GuildId(2)),
             status: Status::Online,
             user: UserOrId::UserId { id: UserId(1) },
         };
@@ -203,6 +203,7 @@ mod tests {
                 Token::Str("1"),
                 Token::StructEnd,
                 Token::Str("guild_id"),
+                Token::Some,
                 Token::NewtypeStruct { name: "GuildId" },
                 Token::Str("2"),
                 Token::Str("status"),
@@ -284,7 +285,7 @@ mod tests {
                 mobile: None,
                 web: None,
             },
-            guild_id: GuildId(2),
+            guild_id: Some(GuildId(2)),
             status: Status::Online,
             user: UserOrId::UserId { id: UserId(1) },
         }]);

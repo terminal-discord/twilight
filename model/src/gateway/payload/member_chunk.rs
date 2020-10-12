@@ -158,7 +158,7 @@ impl<'de> Visitor<'de> for MemberChunkVisitor {
         }
 
         for presence in &mut presences {
-            presence.guild_id = guild_id;
+            presence.guild_id = Some(guild_id);
         }
 
         Ok(MemberChunk {
@@ -419,7 +419,7 @@ mod tests {
                         mobile: None,
                         web: Some(Status::Online),
                     },
-                    guild_id: GuildId(1),
+                    guild_id: Some(GuildId(1)),
                     status: Status::Online,
                     user: UserOrId::UserId { id: UserId(2) },
                 },
@@ -430,7 +430,7 @@ mod tests {
                         mobile: None,
                         web: Some(Status::Online),
                     },
-                    guild_id: GuildId(1),
+                    guild_id: Some(GuildId(1)),
                     status: Status::Online,
                     user: UserOrId::UserId { id: UserId(3) },
                 },
@@ -441,7 +441,7 @@ mod tests {
                         mobile: None,
                         web: None,
                     },
-                    guild_id: GuildId(1),
+                    guild_id: Some(GuildId(1)),
                     status: Status::DoNotDisturb,
                     user: UserOrId::UserId { id: UserId(5) },
                 },

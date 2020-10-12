@@ -230,7 +230,7 @@ impl UpdateCache for GuildDelete {
         if cache.wants(ResourceType::PRESENCE) {
             if let Some((_, ids)) = cache.0.guild_presences.remove(&id) {
                 for user_id in ids {
-                    cache.0.presences.remove(&(id, user_id));
+                    cache.0.presences.remove(&(Some(id), user_id));
                 }
             }
         }
