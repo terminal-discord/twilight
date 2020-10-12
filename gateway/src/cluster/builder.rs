@@ -40,11 +40,7 @@ impl ClusterBuilder {
         Self::_new(token.into(), intents)
     }
 
-    fn _new(mut token: String, intents: Intents) -> Self {
-        if !token.starts_with("Bot ") {
-            token.insert_str(0, "Bot ");
-        }
-
+    fn _new(token: String, intents: Intents) -> Self {
         let token = token.into_boxed_str();
 
         let http_client = Client::new(token.clone());

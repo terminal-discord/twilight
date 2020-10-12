@@ -164,11 +164,7 @@ impl ShardBuilder {
         Self::_new(token.into(), intents)
     }
 
-    fn _new(mut token: String, intents: Intents) -> Self {
-        if !token.starts_with("Bot ") {
-            token.insert_str(0, "Bot ");
-        }
-
+    fn _new(token: String, intents: Intents) -> Self {
         Self(Config {
             gateway_url: None,
             http_client: HttpClient::new(token.clone()),
