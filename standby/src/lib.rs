@@ -908,6 +908,7 @@ mod tests {
             mention_everyone: false,
             mention_roles: Vec::new(),
             mentions: Vec::new(),
+            nonce: None,
             pinned: false,
             reactions: Vec::new(),
             reference: None,

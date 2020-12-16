@@ -51,6 +51,7 @@ pub struct Message {
     pub mention_everyone: bool,
     pub mention_roles: Vec<RoleId>,
     pub mentions: Vec<Mention>,
+    pub nonce: Option<String>,
     pub pinned: bool,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub reactions: Vec<MessageReaction>,
@@ -128,6 +129,7 @@ mod tests {
             mention_everyone: false,
             mention_roles: Vec::new(),
             mentions: Vec::new(),
+            nonce: None,
             pinned: false,
             reactions: Vec::new(),
             reference: None,
@@ -151,7 +153,7 @@ mod tests {
             &[
                 Token::Struct {
                     name: "Message",
-                    len: 18,
+                    len: 19,
                 },
                 Token::Str("attachments"),
                 Token::Seq { len: Some(0) },
@@ -224,6 +226,8 @@ mod tests {
                 Token::Str("mentions"),
                 Token::Seq { len: Some(0) },
                 Token::SeqEnd,
+                Token::Str("nonce"),
+                Token::None,
                 Token::Str("pinned"),
                 Token::Bool(false),
                 Token::Str("stickers"),
@@ -318,6 +322,7 @@ mod tests {
             mention_everyone: false,
             mention_roles: Vec::new(),
             mentions: Vec::new(),
+            nonce: None,
             pinned: false,
             reactions: vec![MessageReaction {
                 count: 7,
@@ -352,7 +357,7 @@ mod tests {
             &[
                 Token::Struct {
                     name: "Message",
-                    len: 24,
+                    len: 25,
                 },
                 Token::Str("activity"),
                 Token::Some,
@@ -475,6 +480,8 @@ mod tests {
                 Token::Str("mentions"),
                 Token::Seq { len: Some(0) },
                 Token::SeqEnd,
+                Token::Str("nonce"),
+                Token::None,
                 Token::Str("pinned"),
                 Token::Bool(false),
                 Token::Str("reactions"),
