@@ -1,5 +1,18 @@
-use crate::{channel::PrivateChannel, guild::GuildStatus, user::CurrentUser};
+use crate::{
+    channel::PrivateChannel,
+    guild::GuildStatus,
+    id::{ChannelId, MessageId},
+    user::CurrentUser,
+};
 use serde::{Deserialize, Serialize};
+
+/// The last read message id and optional message count in a channel
+#[derive(Clone, Default, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct ReadState {
+    pub mention_count: Option<usize>,
+    pub last_message_id: MessageId,
+    pub id: ChannelId,
+}
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Ready {
@@ -9,6 +22,7 @@ pub struct Ready {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub shard: Option<[u64; 2]>,
     pub user: CurrentUser,
+    pub read_state: Vec<ReadState>,
     #[serde(rename = "v")]
     pub version: u64,
 }

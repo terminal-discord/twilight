@@ -867,7 +867,7 @@ mod tests {
         },
         gateway::{
             event::{Event, EventType},
-            payload::{MessageCreate, ReactionAdd, Ready, RoleDelete},
+            payload::{MessageCreate, ReactionAdd, ReadState, Ready, RoleDelete},
         },
         id::{ChannelId, GuildId, MessageId, RoleId, UserId},
         user::{CurrentUser, User},
@@ -1015,6 +1015,11 @@ mod tests {
                 flags: None,
                 locale: None,
             },
+            read_state: vec![ReadState {
+                mention_count: None,
+                last_message_id: MessageId(1),
+                id: ChannelId(1),
+            }],
             version: 6,
         };
         let event = Event::Ready(Box::new(ready));

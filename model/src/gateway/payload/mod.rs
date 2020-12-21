@@ -75,7 +75,7 @@ pub use self::{
     reaction_remove::ReactionRemove,
     reaction_remove_all::ReactionRemoveAll,
     reaction_remove_emoji::ReactionRemoveEmoji,
-    ready::Ready,
+    ready::{ReadState, Ready},
     request_guild_members::RequestGuildMembers,
     role_create::RoleCreate,
     role_delete::RoleDelete,
