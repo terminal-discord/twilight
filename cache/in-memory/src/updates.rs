@@ -317,66 +317,74 @@ fn cache_member_list_update_item(
         // TODO(Noskcaj19): What do we need to do with groups?
         MemberListUpdateItem::Group { .. } => {}
         MemberListUpdateItem::Member(member) => {
-            match cache.0.members.entry((guild_id, member.user.id)) {
-                Entry::Occupied(mut v) => {
-                    let cached_member = v.get_mut();
-                    let cached_member = Arc::make_mut(cached_member);
-
-                    let cached_user = Arc::make_mut(&mut cached_member.user);
-                    cached_user.discriminator = member.user.discriminator.clone();
-                    cached_user.avatar = member.user.avatar.clone();
-                    cached_user.name = member.user.username.clone();
-                    cached_user.id = member.user.id;
-
-                    cached_member.roles = member.roles.clone();
-                    cached_member.mute = member.mute;
-                    cached_member.joined_at = Some(member.joined_at.clone());
-                    cached_member.deaf = member.deaf;
-                    cache.cache_presence(Some(guild_id), member.presence.clone());
-                }
-                Entry::Vacant(k) => {
-                    let user = if let Some(user) = cache.0.users.get(&member.user.id) {
-                        Arc::clone(&user.value().0)
-                    } else {
-                        let user = User {
-                            avatar: member.user.avatar.clone(),
-                            bot: false,
-                            discriminator: member.user.discriminator.clone(),
-                            email: None,
-                            flags: None,
-                            id: member.user.id,
-                            locale: None,
-                            mfa_enabled: None,
-                            name: member.user.username.clone(),
-                            premium_type: None,
-                            public_flags: None,
-                            system: None,
-                            verified: None,
-                        };
-                        cache.cache_user(Cow::Owned(user), Some(guild_id))
-                    };
-                    k.insert(Arc::new(CachedMember {
-                        deaf: member.deaf,
-                        guild_id,
-                        joined_at: Some(member.joined_at.clone()),
-                        mute: member.mute,
-                        nick: None,
-                        pending: false,
-                        premium_since: None,
-                        roles: member.roles.clone(),
-                        user,
-                    }));
-                }
-            };
-
-            cache
-                .0
-                .guild_members
-                .entry(guild_id)
-                .or_default()
-                .insert(member.user.id);
+            cache_member_list_update_member(guild_id, cache, &member)
         }
     }
+}
+
+fn cache_member_list_update_member(
+    guild_id: GuildId,
+    cache: &InMemoryCache,
+    member: &MemberListUpdateMember,
+) {
+    match cache.0.members.entry((guild_id, member.user.id)) {
+        Entry::Occupied(mut v) => {
+            let cached_member = v.get_mut();
+            let cached_member = Arc::make_mut(cached_member);
+
+            let cached_user = Arc::make_mut(&mut cached_member.user);
+            cached_user.discriminator = member.user.discriminator.clone();
+            cached_user.avatar = member.user.avatar.clone();
+            cached_user.name = member.user.username.clone();
+            cached_user.id = member.user.id;
+
+            cached_member.roles = member.roles.clone();
+            cached_member.mute = member.mute;
+            cached_member.joined_at = Some(member.joined_at.clone());
+            cached_member.deaf = member.deaf;
+            cache.cache_presence(Some(guild_id), member.presence.clone());
+        }
+        Entry::Vacant(k) => {
+            let user = if let Some(user) = cache.0.users.get(&member.user.id) {
+                Arc::clone(&user.value().0)
+            } else {
+                let user = User {
+                    avatar: member.user.avatar.clone(),
+                    bot: false,
+                    discriminator: member.user.discriminator.clone(),
+                    email: None,
+                    flags: None,
+                    id: member.user.id,
+                    locale: None,
+                    mfa_enabled: None,
+                    name: member.user.username.clone(),
+                    premium_type: None,
+                    public_flags: None,
+                    system: None,
+                    verified: None,
+                };
+                cache.cache_user(Cow::Owned(user), Some(guild_id))
+            };
+            k.insert(Arc::new(CachedMember {
+                deaf: member.deaf,
+                guild_id,
+                joined_at: Some(member.joined_at.clone()),
+                mute: member.mute,
+                nick: None,
+                pending: false,
+                premium_since: None,
+                roles: member.roles.clone(),
+                user,
+            }));
+        }
+    };
+
+    cache
+        .0
+        .guild_members
+        .entry(guild_id)
+        .or_default()
+        .insert(member.user.id);
 }
 
 impl UpdateCache for MemberListUpdate {
@@ -394,6 +402,12 @@ impl UpdateCache for MemberListUpdate {
                 }
                 MemberListUpdateOp::Update { item, .. } => {
                     cache_member_list_update_item(self.guild_id, cache, item);
+                }
+                MemberListUpdateOp::Delete { .. } => {
+                    // TODO(Noskcaj19): Figure out how to use the index field
+                }
+                MemberListUpdateOp::Insert { item, .. } => {
+                    cache_member_list_update_member(self.guild_id, cache, item);
                 }
                 MemberListUpdateOp::Unknown => {
                     tracing::warn!("member list update unknown type")

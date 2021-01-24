@@ -30,6 +30,13 @@ pub enum MemberListUpdateOp {
         // what is the purpose of this field?
         index: u32,
     },
+    Delete {
+        index: u32,
+    },
+    Insert {
+        item: Box<MemberListUpdateMember>,
+        index: u32,
+    },
     #[serde(other)]
     Unknown,
 }
