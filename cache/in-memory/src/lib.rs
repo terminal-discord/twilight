@@ -73,6 +73,7 @@ use std::{
 };
 use twilight_model::{
     channel::{Group, GuildChannel, PrivateChannel},
+    gateway::payload::ReadState,
     gateway::presence::{Presence, UserOrId},
     guild::{Emoji, Guild, Member, PartialMember, Role},
     id::{ChannelId, EmojiId, GuildId, MessageId, RoleId, UserId},
@@ -151,6 +152,7 @@ struct InMemoryCacheRef {
     members: DashMap<(GuildId, UserId), Arc<CachedMember>>,
     messages: DashMap<ChannelId, VecDeque<Arc<CachedMessage>>>,
     presences: DashMap<(Option<GuildId>, UserId), Arc<CachedPresence>>,
+    read_state: DashMap<ChannelId, ReadState>,
     roles: DashMap<RoleId, GuildItem<Role>>,
     unavailable_guilds: DashSet<GuildId>,
     users: DashMap<UserId, (Arc<User>, BTreeSet<GuildId>)>,
@@ -505,6 +507,13 @@ impl InMemoryCache {
                 .map(|r| Arc::clone(r.value()))
                 .collect(),
         )
+    }
+
+    pub fn read_state(&self, channel_id: ChannelId) -> Option<ReadState> {
+        self.0
+            .read_state
+            .get(&channel_id)
+            .map(|state| state.value().clone())
     }
 
     /// Gets a role by ID.
@@ -899,6 +908,10 @@ impl InMemoryCache {
                 v
             }
         }
+    }
+
+    fn cache_read_state(&self, read_state: ReadState) {
+        self.0.read_state.insert(read_state.id, read_state);
     }
 
     fn cache_roles(&self, guild_id: GuildId, roles: impl IntoIterator<Item = Role>) {
