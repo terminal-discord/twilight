@@ -30,6 +30,7 @@ pub enum DispatchEvent {
     InviteCreate(Box<InviteCreate>),
     InviteDelete(InviteDelete),
     MemberAdd(Box<MemberAdd>),
+    MemberListUpdate(Box<MemberListUpdate>),
     MemberRemove(MemberRemove),
     MemberUpdate(Box<MemberUpdate>),
     MemberChunk(MemberChunk),
@@ -75,6 +76,7 @@ impl DispatchEvent {
             Self::InviteCreate(_) => EventType::InviteCreate,
             Self::InviteDelete(_) => EventType::InviteDelete,
             Self::MemberAdd(_) => EventType::MemberAdd,
+            Self::MemberListUpdate(_) => EventType::MemberListUpdate,
             Self::MemberRemove(_) => EventType::MemberRemove,
             Self::MemberUpdate(_) => EventType::MemberUpdate,
             Self::MemberChunk(_) => EventType::MemberChunk,
@@ -209,6 +211,9 @@ impl<'de, 'a> DeserializeSeed<'de> for DispatchEventWithTypeDeserializer<'a> {
             "GUILD_MEMBER_ADD" => {
                 DispatchEvent::MemberAdd(Box::new(MemberAdd::deserialize(deserializer)?))
             }
+            "GUILD_MEMBER_LIST_UPDATE" => DispatchEvent::MemberListUpdate(Box::new(
+                MemberListUpdate::deserialize(deserializer)?,
+            )),
             "GUILD_MEMBER_REMOVE" => {
                 DispatchEvent::MemberRemove(MemberRemove::deserialize(deserializer)?)
             }

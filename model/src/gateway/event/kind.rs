@@ -28,6 +28,8 @@ pub enum EventType {
     InviteDelete,
     #[serde(rename = "GUILD_MEMBER_ADD")]
     MemberAdd,
+    #[serde(rename = "GUILD_MEMBER_LIST_UPDATE")]
+    MemberListUpdate,
     #[serde(rename = "GUILD_MEMBER_REMOVE")]
     MemberRemove,
     #[serde(rename = "GUILD_MEMBER_UPDATE")]
@@ -89,6 +91,7 @@ impl EventType {
             Self::InviteCreate => Some("INVITE_CREATE"),
             Self::InviteDelete => Some("INVITE_DELETE"),
             Self::MemberAdd => Some("GUILD_MEMBER_ADD"),
+            Self::MemberListUpdate => Some("GUILD_MEMBER_LIST_UPDATE"),
             Self::MemberRemove => Some("GUILD_MEMBER_REMOVE"),
             Self::MemberUpdate => Some("GUILD_MEMBER_UPDATE"),
             Self::MemberChunk => Some("GUILD_MEMBERS_CHUNK"),
@@ -149,6 +152,7 @@ impl<'a> TryFrom<&'a str> for EventType {
             "INVITE_CREATE" => Ok(Self::InviteCreate),
             "INVITE_DELETE" => Ok(Self::InviteDelete),
             "GUILD_MEMBER_ADD" => Ok(Self::MemberAdd),
+            "GUILD_MEMBER_LIST_UPDATE" => Ok(Self::MemberListUpdate),
             "GUILD_MEMBER_REMOVE" => Ok(Self::MemberRemove),
             "GUILD_MEMBER_UPDATE" => Ok(Self::MemberUpdate),
             "GUILD_MEMBERS_CHUNK" => Ok(Self::MemberChunk),

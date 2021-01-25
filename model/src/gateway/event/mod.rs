@@ -65,6 +65,8 @@ pub enum Event {
     InviteDelete(InviteDelete),
     /// A user was added to a guild.
     MemberAdd(Box<MemberAdd>),
+    /// A set of guild members has been updated.
+    MemberListUpdate(Box<MemberListUpdate>),
     /// A user was removed from a guild.
     MemberRemove(MemberRemove),
     /// A user's member object in a guild was updated.
@@ -158,6 +160,7 @@ impl Event {
             Self::InviteCreate(_) => EventType::InviteCreate,
             Self::InviteDelete(_) => EventType::InviteDelete,
             Self::MemberAdd(_) => EventType::MemberAdd,
+            Self::MemberListUpdate(_) => EventType::MemberListUpdate,
             Self::MemberRemove(_) => EventType::MemberRemove,
             Self::MemberUpdate(_) => EventType::MemberUpdate,
             Self::MemberChunk(_) => EventType::MemberChunk,
@@ -210,6 +213,7 @@ impl From<Box<DispatchEvent>> for Event {
             DispatchEvent::InviteCreate(v) => Self::InviteCreate(v),
             DispatchEvent::InviteDelete(v) => Self::InviteDelete(v),
             DispatchEvent::MemberAdd(v) => Self::MemberAdd(v),
+            DispatchEvent::MemberListUpdate(v) => Self::MemberListUpdate(v),
             DispatchEvent::MemberRemove(v) => Self::MemberRemove(v),
             DispatchEvent::MemberUpdate(v) => Self::MemberUpdate(v),
             DispatchEvent::MemberChunk(v) => Self::MemberChunk(v),

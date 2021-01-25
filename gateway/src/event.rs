@@ -49,6 +49,9 @@ bitflags! {
         const INVITE_DELETE = 1 << 47;
         /// Member has been added to a guild.
         const MEMBER_ADD = 1 << 15;
+        /// Not available
+        // This apparently just needs to be unique?
+        const MEMBER_LIST_UPDATE = 1 << 50;
         /// Member has been removed from a guild.
         const MEMBER_REMOVE = 1 << 16;
         /// Member in a guild has been updated.
@@ -143,6 +146,7 @@ impl From<EventType> for EventTypeFlags {
             EventType::InviteCreate => EventTypeFlags::INVITE_CREATE,
             EventType::InviteDelete => EventTypeFlags::INVITE_DELETE,
             EventType::MemberAdd => EventTypeFlags::MEMBER_ADD,
+            EventType::MemberListUpdate => EventTypeFlags::MEMBER_LIST_UPDATE,
             EventType::MemberRemove => EventTypeFlags::MEMBER_REMOVE,
             EventType::MemberUpdate => EventTypeFlags::MEMBER_UPDATE,
             EventType::MemberChunk => EventTypeFlags::MEMBER_CHUNK,
