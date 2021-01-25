@@ -34,7 +34,7 @@ pub enum MemberListUpdateOp {
         index: u32,
     },
     Insert {
-        item: Box<MemberListUpdateMember>,
+        item: MemberListUpdateItem,
         index: u32,
     },
     #[serde(other)]

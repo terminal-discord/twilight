@@ -407,7 +407,7 @@ impl UpdateCache for MemberListUpdate {
                     // TODO(Noskcaj19): Figure out how to use the index field
                 }
                 MemberListUpdateOp::Insert { item, .. } => {
-                    cache_member_list_update_member(self.guild_id, cache, item);
+                    cache_member_list_update_item(self.guild_id, cache, item);
                 }
                 MemberListUpdateOp::Unknown => {
                     tracing::warn!("member list update unknown type")
