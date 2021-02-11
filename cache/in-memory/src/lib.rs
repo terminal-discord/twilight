@@ -137,6 +137,7 @@ fn upsert_item<K: Eq + Hash, V: PartialEq>(map: &DashMap<K, Arc<V>>, k: K, v: V)
 #[derive(Debug, Default)]
 struct InMemoryCacheRef {
     config: Arc<Config>,
+    ack_token: Mutex<Option<String>>,
     channels_guild: DashMap<ChannelId, GuildItem<GuildChannel>>,
     channels_private: DashMap<ChannelId, Arc<PrivateChannel>>,
     // So long as the lock isn't held across await or panic points this is fine.
@@ -262,6 +263,14 @@ impl InMemoryCache {
     /// Update the cache with an event from the gateway.
     pub fn update(&self, value: &impl UpdateCache) {
         value.update(self);
+    }
+
+    pub fn ack_token(&self) -> Option<String> {
+        self.0.ack_token.lock().unwrap().clone()
+    }
+
+    pub fn set_ack_token(&self, token: &str) {
+        *self.0.ack_token.lock().unwrap() = Some(token.to_owned());
     }
 
     /// Gets a channel by ID.

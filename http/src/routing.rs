@@ -306,6 +306,8 @@ impl TryFrom<(Method, &str)> for Path {
 #[derive(Clone, Debug)]
 #[non_exhaustive]
 pub enum Route {
+    /// Mark all messages up to an including the provided id as read
+    AckMessage { channel_id: u64, message_id: u64 },
     /// Route information to add a user to a guild.
     AddGuildMember { guild_id: u64, user_id: u64 },
     /// Route information to add a role to guild member.
@@ -958,6 +960,14 @@ impl Route {
     #[allow(clippy::cognitive_complexity, clippy::too_many_lines)]
     pub fn into_parts(self) -> (Method, Path, Cow<'static, str>) {
         match self {
+            Self::AckMessage {
+                channel_id,
+                message_id,
+            } => (
+                Method::Post,
+                Path::ChannelsIdMessagesId(Method::Post, message_id),
+                format!("channels/{}/messages/{}/ack", channel_id, message_id).into(),
+            ),
             Self::AddGuildMember { guild_id, user_id } => (
                 Method::Put,
                 Path::GuildsIdMembersId(guild_id),

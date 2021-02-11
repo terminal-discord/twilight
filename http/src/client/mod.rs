@@ -195,6 +195,15 @@ impl Client {
         GetAuditLog::new(self, guild_id)
     }
 
+    pub fn ack_message(
+        &self,
+        channel_id: ChannelId,
+        message_id: MessageId,
+        token: Option<String>,
+    ) -> AckMessage<'_> {
+        AckMessage::new(self, channel_id, message_id, token)
+    }
+
     /// Retrieve the bans for a guild.
     ///
     /// # Examples
