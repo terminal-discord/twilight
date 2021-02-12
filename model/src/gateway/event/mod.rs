@@ -63,6 +63,8 @@ pub enum Event {
     InviteCreate(Box<InviteCreate>),
     /// A invite was deleted.
     InviteDelete(InviteDelete),
+    /// A channel has been marked as read
+    MessageAck(MessageAck),
     /// A user was added to a guild.
     MemberAdd(Box<MemberAdd>),
     /// A set of guild members has been updated.
@@ -164,6 +166,7 @@ impl Event {
             Self::MemberRemove(_) => EventType::MemberRemove,
             Self::MemberUpdate(_) => EventType::MemberUpdate,
             Self::MemberChunk(_) => EventType::MemberChunk,
+            Self::MessageAck(_) => EventType::MessageAck,
             Self::MessageCreate(_) => EventType::MessageCreate,
             Self::MessageDelete(_) => EventType::MessageDelete,
             Self::MessageDeleteBulk(_) => EventType::MessageDeleteBulk,
@@ -221,6 +224,7 @@ impl From<Box<DispatchEvent>> for Event {
             DispatchEvent::RoleDelete(v) => Self::RoleDelete(v),
             DispatchEvent::RoleUpdate(v) => Self::RoleUpdate(v),
             DispatchEvent::GuildUpdate(v) => Self::GuildUpdate(v),
+            DispatchEvent::MessageAck(v) => Self::MessageAck(v),
             DispatchEvent::MessageCreate(v) => Self::MessageCreate(v),
             DispatchEvent::MessageDelete(v) => Self::MessageDelete(v),
             DispatchEvent::MessageDeleteBulk(v) => Self::MessageDeleteBulk(v),

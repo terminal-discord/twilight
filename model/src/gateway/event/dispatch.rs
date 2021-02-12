@@ -29,6 +29,7 @@ pub enum DispatchEvent {
     GuildUpdate(Box<GuildUpdate>),
     InviteCreate(Box<InviteCreate>),
     InviteDelete(InviteDelete),
+    MessageAck(MessageAck),
     MemberAdd(Box<MemberAdd>),
     MemberListUpdate(Box<MemberListUpdate>),
     MemberRemove(MemberRemove),
@@ -80,6 +81,7 @@ impl DispatchEvent {
             Self::MemberRemove(_) => EventType::MemberRemove,
             Self::MemberUpdate(_) => EventType::MemberUpdate,
             Self::MemberChunk(_) => EventType::MemberChunk,
+            Self::MessageAck(_) => EventType::MessageAck,
             Self::MessageCreate(_) => EventType::MessageCreate,
             Self::MessageDelete(_) => EventType::MessageDelete,
             Self::MessageDeleteBulk(_) => EventType::MessageDeleteBulk,
@@ -128,6 +130,7 @@ impl TryFrom<Event> for DispatchEvent {
             Event::MemberRemove(v) => Self::MemberRemove(v),
             Event::MemberUpdate(v) => Self::MemberUpdate(v),
             Event::MemberChunk(v) => Self::MemberChunk(v),
+            Event::MessageAck(v) => Self::MessageAck(v),
             Event::MessageCreate(v) => Self::MessageCreate(v),
             Event::MessageDelete(v) => Self::MessageDelete(v),
             Event::MessageDeleteBulk(v) => Self::MessageDeleteBulk(v),
@@ -238,6 +241,7 @@ impl<'de, 'a> DeserializeSeed<'de> for DispatchEventWithTypeDeserializer<'a> {
             "INVITE_DELETE" => {
                 DispatchEvent::InviteDelete(InviteDelete::deserialize(deserializer)?)
             }
+            "MESSAGE_ACK" => DispatchEvent::MessageAck(MessageAck::deserialize(deserializer)?),
             "MESSAGE_CREATE" => {
                 DispatchEvent::MessageCreate(Box::new(MessageCreate::deserialize(deserializer)?))
             }

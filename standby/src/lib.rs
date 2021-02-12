@@ -816,6 +816,7 @@ fn event_guild_id(event: &Event) -> Option<GuildId> {
         Event::MemberListUpdate(e) => Some(e.guild_id),
         Event::MemberRemove(e) => Some(e.guild_id),
         Event::MemberUpdate(e) => Some(e.guild_id),
+        Event::MessageAck(_) => None,
         Event::MessageCreate(e) => e.guild_id,
         Event::MessageDelete(_) => None,
         Event::MessageDeleteBulk(_) => None,

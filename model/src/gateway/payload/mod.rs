@@ -23,6 +23,7 @@ mod member_chunk;
 mod member_list_update;
 mod member_remove;
 mod member_update;
+mod message_ack;
 mod message_create;
 mod message_delete;
 mod message_delete_bulk;
@@ -66,6 +67,7 @@ pub use self::{
     },
     member_remove::MemberRemove,
     member_update::MemberUpdate,
+    message_ack::MessageAck,
     message_create::MessageCreate,
     message_delete::MessageDelete,
     message_delete_bulk::MessageDeleteBulk,

@@ -36,6 +36,7 @@ pub enum EventType {
     MemberUpdate,
     #[serde(rename = "GUILD_MEMBERS_CHUNK")]
     MemberChunk,
+    MessageAck,
     MessageCreate,
     MessageDelete,
     MessageDeleteBulk,
@@ -95,6 +96,7 @@ impl EventType {
             Self::MemberRemove => Some("GUILD_MEMBER_REMOVE"),
             Self::MemberUpdate => Some("GUILD_MEMBER_UPDATE"),
             Self::MemberChunk => Some("GUILD_MEMBERS_CHUNK"),
+            Self::MessageAck => Some("MESSAGE_ACK"),
             Self::MessageCreate => Some("MESSAGE_CREATE"),
             Self::MessageDelete => Some("MESSAGE_DELETE"),
             Self::MessageDeleteBulk => Some("MESSAGE_DELETE_BULK"),
@@ -156,6 +158,7 @@ impl<'a> TryFrom<&'a str> for EventType {
             "GUILD_MEMBER_REMOVE" => Ok(Self::MemberRemove),
             "GUILD_MEMBER_UPDATE" => Ok(Self::MemberUpdate),
             "GUILD_MEMBERS_CHUNK" => Ok(Self::MemberChunk),
+            "MESSAGE_ACK" => Ok(Self::MessageAck),
             "MESSAGE_CREATE" => Ok(Self::MessageCreate),
             "MESSAGE_DELETE" => Ok(Self::MessageDelete),
             "MESSAGE_DELETE_BULK" => Ok(Self::MessageDeleteBulk),

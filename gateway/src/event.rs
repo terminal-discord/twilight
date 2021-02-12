@@ -61,6 +61,9 @@ bitflags! {
         /// This may be all of the remaining members or not; the chunk index in
         /// the event payload needs to be confirmed.
         const MEMBER_CHUNK = 1 << 18;
+        /// Not available
+        // This apparently just needs to be unique?
+        const MESSAGE_ACK = 1 << 51;
         /// Message created in a channel.
         const MESSAGE_CREATE = 1 << 19;
         /// Message deleted in a channel.
@@ -150,6 +153,7 @@ impl From<EventType> for EventTypeFlags {
             EventType::MemberRemove => EventTypeFlags::MEMBER_REMOVE,
             EventType::MemberUpdate => EventTypeFlags::MEMBER_UPDATE,
             EventType::MemberChunk => EventTypeFlags::MEMBER_CHUNK,
+            EventType::MessageAck => EventTypeFlags::MESSAGE_ACK,
             EventType::MessageCreate => EventTypeFlags::MESSAGE_CREATE,
             EventType::MessageDelete => EventTypeFlags::MESSAGE_DELETE,
             EventType::MessageDeleteBulk => EventTypeFlags::MESSAGE_DELETE_BULK,

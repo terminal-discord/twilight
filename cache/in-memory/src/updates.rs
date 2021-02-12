@@ -44,6 +44,7 @@ impl UpdateCache for Event {
             MemberListUpdate(v) => c.update(v.deref()),
             MemberRemove(v) => c.update(v),
             MemberUpdate(v) => c.update(v.deref()),
+            MessageAck(v) => c.update(v.deref()),
             MemberChunk(v) => c.update(v),
             MessageCreate(v) => c.update(v.deref()),
             MessageDelete(v) => c.update(v),
@@ -288,6 +289,14 @@ impl UpdateCache for GuildUpdate {
             guild.widget_channel_id = self.widget_channel_id;
             guild.widget_enabled = self.widget_enabled;
         };
+    }
+}
+
+impl UpdateCache for MessageAck {
+    fn update(&self, cache: &InMemoryCache) {
+        let mut read_state = cache.0.read_state.entry(self.channel_id).or_default();
+        // TODO: Should we update `mention_count` here?
+        read_state.last_message_id = self.message_id;
     }
 }
 
