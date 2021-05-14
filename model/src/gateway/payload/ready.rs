@@ -1,5 +1,8 @@
+use crate::channel::ChannelType;
+use crate::guild::PartialMember;
+use crate::id::UserId;
+use crate::user::User;
 use crate::{
-    channel::PrivateChannel,
     guild::GuildStatus,
     id::{ChannelId, MessageId},
     user::CurrentUser,
@@ -14,15 +17,36 @@ pub struct ReadState {
     pub id: ChannelId,
 }
 
+#[derive(Clone, Default, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct ReadStateWrapper {
+    pub version: u64,
+    pub partial: bool,
+    pub entries: Vec<ReadState>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
+pub struct PartialPrivateChannel {
+    pub id: ChannelId,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub last_message_id: Option<MessageId>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub last_pin_timestamp: Option<String>,
+    #[serde(rename = "type")]
+    pub kind: ChannelType,
+    pub recipient_ids: Vec<UserId>,
+}
+
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Ready {
+    pub users: Vec<User>,
     pub guilds: Vec<GuildStatus>,
-    pub private_channels: Vec<PrivateChannel>,
+    pub private_channels: Vec<PartialPrivateChannel>,
+    pub merged_members: Vec<Vec<PartialMember>>,
     pub session_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub shard: Option<[u64; 2]>,
     pub user: CurrentUser,
-    pub read_state: Vec<ReadState>,
+    pub read_state: ReadStateWrapper,
     #[serde(rename = "v")]
     pub version: u64,
 }
@@ -37,6 +61,7 @@ mod tests {
     };
     use serde_test::Token;
 
+    #[allow(clippy::too_many_lines)]
     #[test]
     fn test_ready() {
         let guilds = vec![
@@ -84,8 +109,11 @@ mod tests {
             &[
                 Token::Struct {
                     name: "Ready",
-                    len: 5,
+                    len: 9,
                 },
+                Token::Str("users"),
+                Token::Seq { len: Some(0) },
+                Token::SeqEnd,
                 Token::Str("guilds"),
                 Token::Seq { len: Some(2) },
                 Token::Struct {
@@ -108,6 +136,12 @@ mod tests {
                 Token::Str("unavailable"),
                 Token::Bool(true),
                 Token::StructEnd,
+                Token::SeqEnd,
+                Token::Str("private_channels"),
+                Token::Seq { len: Some(0) },
+                Token::SeqEnd,
+                Token::Str("merged_members"),
+                Token::Seq { len: Some(0) },
                 Token::SeqEnd,
                 Token::Str("session_id"),
                 Token::Str("foo"),
@@ -135,6 +169,19 @@ mod tests {
                 Token::Bool(false),
                 Token::Str("username"),
                 Token::Str("bar"),
+                Token::StructEnd,
+                Token::Str("read_state"),
+                Token::Struct {
+                    name: "ReadStateWrapper",
+                    len: 3,
+                },
+                Token::Str("version"),
+                Token::U64(1),
+                Token::Str("partial"),
+                Token::Bool(false),
+                Token::Str("entries"),
+                Token::Seq { len: Some(0) },
+                Token::SeqEnd,
                 Token::StructEnd,
                 Token::Str("v"),
                 Token::U64(8),

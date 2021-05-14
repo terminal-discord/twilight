@@ -48,7 +48,7 @@ pub enum PermissionOverwriteType {
     Role(RoleId),
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 struct PermissionOverwriteData {
     allow: Permissions,
     deny: Permissions,

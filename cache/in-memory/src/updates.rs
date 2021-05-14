@@ -1,6 +1,7 @@
 use super::{config::ResourceType, model::CachedMember, InMemoryCache};
 use dashmap::{mapref::entry::Entry, DashMap};
 use std::{borrow::Cow, collections::HashSet, hash::Hash, ops::Deref, sync::Arc};
+use twilight_model::channel::PrivateChannel;
 use twilight_model::{
     channel::{message::MessageReaction, Channel, GuildChannel, ReactionType},
     gateway::{event::Event, payload::*, presence::Presence},
@@ -317,24 +318,17 @@ impl UpdateCache for MemberAdd {
     }
 }
 
-fn cache_member_list_update_item(
-    guild_id: GuildId,
-    cache: &InMemoryCache,
-    item: &MemberListUpdateItem,
-) {
+fn cache_member_list_update_item(guild_id: GuildId, cache: &InMemoryCache, item: &MemberListItem) {
     match item {
-        // TODO(Noskcaj19): What do we need to do with groups?
-        MemberListUpdateItem::Group { .. } => {}
-        MemberListUpdateItem::Member(member) => {
-            cache_member_list_update_member(guild_id, cache, &member)
-        }
+        MemberListItem::Group { .. } => {}
+        MemberListItem::Member(member) => cache_member_list_update_member(guild_id, cache, &member),
     }
 }
 
 fn cache_member_list_update_member(
     guild_id: GuildId,
     cache: &InMemoryCache,
-    member: &MemberListUpdateMember,
+    member: &MemberListMember,
 ) {
     match cache.0.members.entry((guild_id, member.user.id)) {
         Entry::Occupied(mut v) => {
@@ -412,9 +406,8 @@ impl UpdateCache for MemberListUpdate {
                 MemberListUpdateOp::Update { item, .. } => {
                     cache_member_list_update_item(self.guild_id, cache, item);
                 }
-                MemberListUpdateOp::Delete { .. } => {
-                    // TODO(Noskcaj19): Figure out how to use the index field
-                }
+                MemberListUpdateOp::Invalidate { .. } => {}
+                MemberListUpdateOp::Delete { .. } => {}
                 MemberListUpdateOp::Insert { item, .. } => {
                     cache_member_list_update_item(self.guild_id, cache, item);
                 }
@@ -756,12 +749,57 @@ impl UpdateCache for Ready {
             }
         }
 
-        for read_state in &self.read_state {
+        for read_state in &self.read_state.entries {
             cache.cache_read_state(read_state.clone());
         }
 
         for private_channel in &self.private_channels {
-            cache.cache_private_channel(private_channel.clone());
+            cache.cache_private_channel(PrivateChannel {
+                id: private_channel.id,
+                last_message_id: private_channel.last_message_id,
+                last_pin_timestamp: private_channel.last_pin_timestamp.clone(),
+                kind: private_channel.kind,
+                recipients: private_channel
+                    .recipient_ids
+                    .iter()
+                    .map(|id| {
+                        self.users
+                            .iter()
+                            .find(|u| u.id == *id)
+                            .expect("Ready must contain all users it refers to")
+                            .clone()
+                    })
+                    .collect(),
+            });
+        }
+
+        let current_user_as_user = Arc::new(User {
+            avatar: self.user.avatar.clone(),
+            bot: self.user.bot,
+            discriminator: self.user.discriminator.clone(),
+            email: self.user.email.clone(),
+            flags: self.user.flags,
+            id: self.user.id,
+            locale: self.user.locale.clone(),
+            mfa_enabled: Some(self.user.mfa_enabled),
+            name: self.user.name.clone(),
+            premium_type: self.user.premium_type,
+            public_flags: self.user.public_flags,
+            system: None,
+            verified: self.user.verified,
+        });
+        for (idx, guild_members) in self.merged_members.iter().enumerate() {
+            for guild_member in guild_members {
+                let guild_id = match &self.guilds[idx] {
+                    GuildStatus::Online(guild) => guild.id,
+                    GuildStatus::Offline(guild) => guild.id,
+                };
+                cache.cache_borrowed_partial_member(
+                    guild_id,
+                    guild_member,
+                    Arc::clone(&current_user_as_user),
+                );
+            }
         }
     }
 }

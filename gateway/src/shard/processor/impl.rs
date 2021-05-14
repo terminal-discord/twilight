@@ -15,7 +15,6 @@ use crate::{event::EventTypeFlags, listener::Listeners};
 use serde::{Deserialize, Serialize};
 use std::{
     borrow::Cow,
-    env::consts::OS,
     error::Error,
     fmt::{Display, Formatter, Result as FmtResult},
     str,
@@ -291,12 +290,12 @@ impl ShardProcessor {
             tracing::debug!("shard {:?} finished queue", config.shard());
         }
 
-        let properties = IdentifyProperties::new("twilight.rs", "twilight.rs", OS, "", "");
+        let properties = IdentifyProperties::default_windows_desktop();
 
         #[cfg(feature = "compression")]
-        url.push_str("?v=8&compress=zlib-stream");
+        url.push_str("?encoding=json&v=9&compress=zlib-stream");
         #[cfg(not(feature = "compression"))]
-        url.push_str("?v=8");
+        url.push_str("?encoding=json&v=9");
 
         let emitter = Emitter::new(listeners);
         emitter.event(Event::ShardConnecting(Connecting {
@@ -893,15 +892,10 @@ impl ShardProcessor {
     async fn identify(&mut self) -> Result<(), SessionSendError> {
         self.session.set_stage(Stage::Identifying);
 
-        let identify = Identify::new(IdentifyInfo {
-            compress: false,
-            large_threshold: self.config.large_threshold(),
-            intents: self.config.intents(),
-            properties: self.properties.clone(),
-            shard: Some(self.config.shard()),
-            presence: self.config.presence().cloned(),
-            token: self.config.token().to_owned(),
-        });
+        let identify = Identify::new(IdentifyInfo::new(
+            self.config.token(),
+            self.properties.clone(),
+        ));
         self.emitter.event(Event::ShardIdentifying(Identifying {
             shard_id: self.config.shard()[0],
             shard_total: self.config.shard()[1],

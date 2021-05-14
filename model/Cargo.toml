@@ -16,6 +16,7 @@ version = "0.4.1"
 
 [dependencies]
 bitflags = { default-features = false, version = "1" }
+murmur3 = "0.5.1"
 serde = { default-features = false, features = ["derive"], version = "1" }
 serde-value = { default-features = false, version = "0.7" }
 serde_repr = { default-features = false, version = "0.1" }

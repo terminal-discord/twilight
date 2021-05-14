@@ -868,7 +868,7 @@ mod tests {
         },
         gateway::{
             event::{Event, EventType},
-            payload::{MessageCreate, ReactionAdd, ReadState, Ready, RoleDelete},
+            payload::{MessageCreate, ReactionAdd, ReadState, ReadStateWrapper, Ready, RoleDelete},
         },
         id::{ChannelId, GuildId, MessageId, RoleId, UserId},
         user::{CurrentUser, User},
@@ -1000,8 +1000,10 @@ mod tests {
         let ready = Ready {
             guilds: Vec::new(),
             private_channels: Vec::new(),
+            merged_members: vec![],
             session_id: String::new(),
             shard: Some([5, 7]),
+            users: vec![],
             user: CurrentUser {
                 avatar: None,
                 bot: false,
@@ -1016,11 +1018,15 @@ mod tests {
                 flags: None,
                 locale: None,
             },
-            read_state: vec![ReadState {
-                mention_count: None,
-                last_message_id: MessageId(1),
-                id: ChannelId(1),
-            }],
+            read_state: ReadStateWrapper {
+                version: 0,
+                partial: false,
+                entries: vec![ReadState {
+                    mention_count: None,
+                    last_message_id: MessageId(1),
+                    id: ChannelId(1),
+                }],
+            },
             version: 6,
         };
         let event = Event::Ready(Box::new(ready));
