@@ -4,6 +4,14 @@
 
 [![discord badge][]][discord link] [![github badge][]][github link] [![license badge][]][license link] ![rust badge]
 
+## Important
+
+This is a *unofficial* fork of twilight specifically for making custom clients.
+
+_**Using the Discord API in this way is explicitly a violation of the Discord TOS.**_
+
+_**This fork is not affiliated with the upstream maintainers, please do not submit issues to the upstream repository**_
+
 ![project logo][logo]
 
 `twilight` is a powerful, flexible, and scalable ecosystem of Rust libraries
