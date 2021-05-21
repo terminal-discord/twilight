@@ -4,6 +4,7 @@ use std::{borrow::Cow, collections::HashSet, hash::Hash, ops::Deref, sync::Arc};
 use twilight_model::{
     channel::{message::MessageReaction, Channel, GuildChannel, ReactionType},
     gateway::{event::Event, payload::*, presence::Presence},
+    guild::GuildStatus,
     id::GuildId,
 };
 
@@ -623,8 +624,15 @@ impl UpdateCache for Ready {
         }
 
         if cache.wants(ResourceType::GUILD) {
-            for guild in &self.guilds {
-                cache.unavailable_guild(guild.id);
+            for status in &self.guilds {
+                match status {
+                    GuildStatus::Offline(u) => {
+                        cache.unavailable_guild(u.id);
+                    }
+                    GuildStatus::Online(g) => {
+                        cache.cache_guild(g.clone());
+                    }
+                }
             }
         }
     }

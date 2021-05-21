@@ -1,9 +1,9 @@
-use crate::{guild::UnavailableGuild, user::CurrentUser};
+use crate::{guild::GuildStatus, user::CurrentUser};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Ready {
-    pub guilds: Vec<UnavailableGuild>,
+    pub guilds: Vec<GuildStatus>,
     pub session_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub shard: Option<[u64; 2]>,
@@ -14,9 +14,9 @@ pub struct Ready {
 
 #[cfg(test)]
 mod tests {
-    use super::Ready;
+    use super::{ReadStateWrapper, Ready};
     use crate::{
-        guild::UnavailableGuild,
+        guild::{GuildStatus, UnavailableGuild},
         id::{GuildId, UserId},
         user::CurrentUser,
     };
@@ -25,18 +25,21 @@ mod tests {
     #[test]
     fn test_ready() {
         let guilds = vec![
-            UnavailableGuild {
+            GuildStatus::Offline(UnavailableGuild {
                 id: GuildId(1),
                 unavailable: true,
-            },
-            UnavailableGuild {
+            }),
+            GuildStatus::Offline(UnavailableGuild {
                 id: GuildId(2),
                 unavailable: true,
-            },
+            }),
         ];
 
         let ready = Ready {
+            users: vec![],
             guilds,
+            private_channels: vec![],
+            merged_members: vec![],
             session_id: "foo".to_owned(),
             shard: Some([4, 7]),
             user: CurrentUser {
@@ -52,6 +55,11 @@ mod tests {
                 premium_type: None,
                 public_flags: None,
                 verified: None,
+            },
+            read_state: ReadStateWrapper {
+                version: 1,
+                partial: false,
+                entries: vec![],
             },
             version: 8,
         };
